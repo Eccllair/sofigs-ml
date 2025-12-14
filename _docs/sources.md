@@ -1,0 +1,5 @@
+[Cтатья на habr по GRU](https://habr.com/ru/companies/mvideo/articles/780774/)
+[Online Retail Data Set](https://www.kaggle.com/datasets/vijayuv/onlineretail)
+[Retailrocket recommender system dataset](https://www.kaggle.com/datasets/retailrocket/ecommerce-dataset)
+[Supermart Grocery Sales - Retail Analytics Dataset](https://www.kaggle.com/datasets/mohamedharris/supermart-grocery-sales-retail-analytics-dataset)
+[Retail Analysis on Large Dataset](https://www.kaggle.com/datasets/sahilprajapati143/retail-analysis-large-dataset/data)

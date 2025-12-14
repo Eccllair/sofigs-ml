@@ -1,0 +1,27 @@
+[project]
+name = "sofigs-ml"
+version = "0.0.0"
+description = "\"ML service for software engineering\""
+authors = [
+    {name = "Eccllair",email = "bright.stellar.accretion@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "keras (>=3.12.0,<4.0.0)",
+    "tensorflow (>=2.20.0,<3.0.0)",
+    "pydantic (>=2.12.4,<3.0.0)",
+    "fastapi (>=0.124.0,<0.125.0)",
+    "scikit-learn (>=1.8.0,<2.0.0)",
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "ipykernel (>=7.1.0,<8.0.0)",
+    "pandas (>=2.3.3,<3.0.0)"
+]
