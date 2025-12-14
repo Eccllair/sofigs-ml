@@ -176,7 +176,7 @@ def prepare_data(raw_data: list[TrainingEvent]) -> tuple | None:
         seq_target_categories = []
 
         if i < SEQ_LENGTH:
-            for _ in range(SEQ_LENGTH - i):
+            for k in range(SEQ_LENGTH - i):
                 seq_actions.append(0)
                 seq_properties.append(0)
                 seq_values.append("")
@@ -184,10 +184,17 @@ def prepare_data(raw_data: list[TrainingEvent]) -> tuple | None:
                 seq_deltas.append(0)
                 seq_seasons.append(0)
 
-                seq_target_actions.append(0)
-                seq_target_properties.append(0)
-                seq_target_values.append("")
-                seq_target_categories.append(0)
+                if k != SEQ_LENGTH - i - 1:
+                    seq_target_actions.append(0)
+                    seq_target_properties.append(0)
+                    seq_target_values.append("")
+                    seq_target_categories.append(0)
+                else:
+                    target_event = raw_data[0]
+                    seq_target_actions.append(event_to_int(target_event.event))
+                    seq_target_properties.append(target_event.item_property)
+                    seq_target_values.append(target_event.property_value)
+                    seq_target_categories.append(target_event.item_category)
 
             for j in range(i):
                 event = raw_data[j]
@@ -199,7 +206,7 @@ def prepare_data(raw_data: list[TrainingEvent]) -> tuple | None:
                 seq_seasons.append(event.season)
 
                 target_event = raw_data[j + 1]
-                seq_target_actions.append(event_to_int(event.event))
+                seq_target_actions.append(event_to_int(target_event.event))
                 seq_target_properties.append(target_event.item_property)
                 seq_target_values.append(target_event.property_value)
                 seq_target_categories.append(target_event.item_category)
@@ -214,7 +221,7 @@ def prepare_data(raw_data: list[TrainingEvent]) -> tuple | None:
                 seq_seasons.append(event.season)
 
                 target_event = raw_data[i - SEQ_LENGTH + j + 1]
-                seq_target_actions.append(event_to_int(event.event))
+                seq_target_actions.append(event_to_int(target_event.event))
                 seq_target_properties.append(target_event.item_property)
                 seq_target_values.append(target_event.property_value)
                 seq_target_categories.append(target_event.item_category)
