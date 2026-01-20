@@ -9,6 +9,7 @@ from keras.layers import (
     Concatenate,
     Dropout,
     BatchNormalization,
+    TimeDistributed,
 )
 
 from app.common.schemas import TrainingEvent
@@ -82,17 +83,17 @@ def create_gru_model(
     # 4. GRU СЛОЙ
     gru_layer = GRU(
         units=gru_units,
-        return_sequences=False,
+        return_sequences=True,
         dropout=dropout_rate,
         recurrent_dropout=dropout_rate,
         name="gru_layer",
     )(combined)
 
     # 5. БАТЧ-НОРМАЛИЗАЦИЯ
-    batch_norm = BatchNormalization(name="batch_norm")(gru_layer)
+    batch_norm = TimeDistributed(BatchNormalization(), name="batch_norm")(gru_layer)
 
     # 6. ДРОПАУТ ДЛЯ РЕГУЛЯРИЗАЦИИ
-    dropout_layer = Dropout(dropout_rate, name="dropout")(batch_norm)
+    dropout_layer = TimeDistributed(Dropout(dropout_rate), name="dropout")(batch_norm)
 
     # 7. ВЫХОДНЫЕ СЛОИ (МУЛЬТИ-ВЫХОДНАЯ МОДЕЛЬ)
     # Каждый выход предсказывает свою категорию
@@ -259,25 +260,26 @@ def prepare_data(raw_data: list[TrainingEvent]) -> tuple | None:
 # Разделяем данные на тренировочные и валидационные наборы
 def train_val_split(inputs, targets, val_split=0.2):
     """Разделение данных на тренировочные и валидационные"""
-    train_inputs = []
-    val_inputs = []
-    train_targets = []
-    val_targets = []
+    # Преобразуем все массивы в numpy
+    inputs = [np.array(inp) for inp in inputs]
+    targets = [np.array(tar) for tar in targets]
 
-    # Для каждого массива входных данных
-    for i in range(len(inputs)):
-        train_val_split_result = train_test_split(
-            inputs[i], test_size=val_split, random_state=42
-        )
-        train_inputs.append(train_val_split_result[0])
-        val_inputs.append(train_val_split_result[1])
+    # Объединяем индексы
+    n_samples = len(inputs[0])
+    indices = np.arange(n_samples)
+    np.random.shuffle(indices)
 
-    # Для каждого массива целевых данных
-    for i in range(len(targets)):
-        train_val_split_result = train_test_split(
-            targets[i], test_size=val_split, random_state=42
-        )
-        train_targets.append(train_val_split_result[0])
-        val_targets.append(train_val_split_result[1])
+    # Вычисляем точку разделения
+    split_idx = int(n_samples * (1 - val_split))
+
+    train_indices = indices[:split_idx]
+    val_indices = indices[split_idx:]
+
+    # Разделяем данные
+    train_inputs = [inp[train_indices] for inp in inputs]
+    val_inputs = [inp[val_indices] for inp in inputs]
+
+    train_targets = [tar[train_indices] for tar in targets]
+    val_targets = [tar[val_indices] for tar in targets]
 
     return train_inputs, val_inputs, train_targets, val_targets

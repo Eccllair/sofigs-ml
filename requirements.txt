@@ -1,0 +1,5 @@
+pandas
+tensorflow==2.19.1
+tf-keras==2.19.0
+keras-hub
+keras-rs
